@@ -1,0 +1,14 @@
+{
+  "name": "zonk",
+  "version": "0.0.1",
+  "description": "Zonk!",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Māris Vilks <kaaposc@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "should": "^8.3.0"
+  }
+}
