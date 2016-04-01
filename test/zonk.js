@@ -3,7 +3,7 @@ var game = require('../lib/game.js');
 
 describe('Game', function() {
   describe('when initialized', function() {
-    before(function() {
+    beforeEach(function() {
       game.new();
     });
 
@@ -18,7 +18,7 @@ describe('Game', function() {
   });
 
   describe('when dice thrown', function() {
-    before(function() {
+    beforeEach(function() {
       game.new();
       game.throw();
     });
@@ -36,5 +36,38 @@ describe('Game', function() {
     });
   });
 
+  describe('when keeping one or more dice', function() {
+    beforeEach(function() {
+      game.new();
+      game.throw();
+    });
+
+    it('should have 5 throwable dice *after* one is kept', function() {
+      game.dice[0] = 1;
+      game.keep(0);
+      game.dice.should.have.length(6);
+      game.throw();
+      game.dice.should.have.length(5);
+    });
+
+    it('should have 3 throwable dice after three are kept', function() {
+      game.dice[0] = 1;
+      game.dice[1] = 1;
+      game.dice[2] = 5;
+      game.keep(0, 1, 2);
+      game.dice.should.have.length(3);
+    });
+
+    it('should throw only 5 dice after one is kept', function() {
+      game.dice[0] = 1;
+      game.keep(0);
+      game.throw();
+      game.dice.should.have.length(5);
+    });
+  });
+
+  describe('rules say', function() {
+    describe('', function() {})
+  });
 
 });
