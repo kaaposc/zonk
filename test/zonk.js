@@ -1,4 +1,7 @@
-var should = require('should');
+var should = require('should'),
+  assert = require('assert'),
+  _ = require('lodash');
+
 var game = require('../lib/game.js');
 
 describe('Game', function() {
@@ -28,11 +31,12 @@ describe('Game', function() {
     });
 
     it('should require player to keep one or more dice', function() {
-      game.throw().should.equal(false);
+      game.throw.bind(game).should.throw(game.ZonkException);
       game.dice[0] = 1;
       game.keep(0);
-      game.kept.should.have.length(1);
-      game.kept[0].should.deepEqual([1]);
+      _.flattenDeep(game.kept).should.have.length(1);
+      game.kept[0].should.deepEqual([0]);
+      game.throw.bind(game).should.not.throw();
     });
   });
 
@@ -42,32 +46,62 @@ describe('Game', function() {
       game.throw();
     });
 
-    it('should have 5 throwable dice *after* one is kept', function() {
-      game.dice[0] = 1;
-      game.keep(0);
-      game.dice.should.have.length(6);
-      game.throw();
-      game.dice.should.have.length(5);
-    });
-
-    it('should have 3 throwable dice after three are kept', function() {
-      game.dice[0] = 1;
-      game.dice[1] = 1;
-      game.dice[2] = 5;
-      game.keep(0, 1, 2);
-      game.dice.should.have.length(3);
-    });
-
     it('should throw only 5 dice after one is kept', function() {
+      var IMPOSSIBLE_VALUE = -1;
       game.dice[0] = 1;
       game.keep(0);
+      game.dice = fillDice(game.dice, IMPOSSIBLE_VALUE);
       game.throw();
-      game.dice.should.have.length(5);
+      game.dice[0].should.equal(IMPOSSIBLE_VALUE);
+      game.dice[1].should.not.equal(IMPOSSIBLE_VALUE);
     });
+
+    it('should throw only 3 dice after three are kept', function() {
+      var IMPOSSIBLE_VALUE = -1;
+      game.dice[0] = 1;
+      game.dice[2] = 1;
+      game.dice[3] = 5;
+      game.keep(0, 2, 3);
+      game.dice = fillDice(game.dice, IMPOSSIBLE_VALUE);
+      game.throw();
+      game.dice[0].should.equal(IMPOSSIBLE_VALUE);
+      game.dice[1].should.not.equal(IMPOSSIBLE_VALUE);
+      game.dice[2].should.equal(IMPOSSIBLE_VALUE);
+      game.dice[3].should.equal(IMPOSSIBLE_VALUE);
+      game.dice[4].should.not.equal(IMPOSSIBLE_VALUE);
+    });
+
+    it('should throw die that has been kept and then un-kept', function() {
+      var IMPOSSIBLE_VALUE = -1;
+      game.dice[0] = 1;
+      game.keep(0);
+      game.dice[1] = 5;
+      game.keep(1);
+      game.kept.should.deepEqual([[0, 1]]);
+      game.unkeep(0);
+      game.kept.should.deepEqual([[1]]);
+      game.dice = fillDice(game.dice, IMPOSSIBLE_VALUE);
+      game.throw();
+      game.dice[0].should.not.equal(IMPOSSIBLE_VALUE);
+      game.dice[1].should.equal(IMPOSSIBLE_VALUE);
+    })
+
   });
 
   describe('rules say', function() {
-    describe('', function() {})
+    describe('keeping "1"', function() {
+      it('gives 100 pts if one is kept', function() {
+        game.dice[0] = 1;
+        game.keep(0);
+        game.score.should.equal(100);
+      });
+    });
   });
 
 });
+
+function fillDice(dice, value) {
+  return dice.map(function() {
+    return value;
+  });
+}

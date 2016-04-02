@@ -7,8 +7,12 @@
     "test": "mocha"
   },
   "author": "Māris Vilks <kaaposc@gmail.com>",
+  "repository": "kaaposc/zonk",
   "license": "ISC",
   "devDependencies": {
     "should": "^8.3.0"
+  },
+  "dependencies": {
+    "lodash": "^4.7.0"
   }
 }
