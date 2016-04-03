@@ -125,6 +125,37 @@ describe('Game', function() {
         game.score.should.equal(4000);
       });
     });
+
+    describe('keeping "2"', function() {
+      beforeEach(function() {
+        game.new();
+        game.throw();
+      });
+
+      it('gives 0 pts when less than 3 are kept', function() {
+        game.dice[0] = game.dice[1] = 2;
+        game.keep(0, 1);
+        game.score.should.equal(0);
+      });
+
+      it('gives 200 pts when 3 are kept', function() {
+        game.dice[0] = game.dice[1] = game.dice[2] = 2;
+        game.keep(0, 1, 2);
+        game.score.should.equal(200);
+      });
+
+      it('gives 200+200+... pts when more than 3 are kept', function() {
+        game.dice[0] = game.dice[1] = game.dice[2] = game.dice[3] = 2;
+        game.keep(0, 1, 2, 3);
+        game.score.should.equal(400);
+        game.dice[4] = 2;
+        game.keep(4);
+        game.score.should.equal(600);
+        game.dice[5] = 2;
+        game.keep(5);
+        game.score.should.equal(800);
+      });
+    });
   });
 
 });
