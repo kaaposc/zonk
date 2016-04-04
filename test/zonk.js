@@ -316,7 +316,16 @@ describe('Game', function() {
         game.score.should.equal(1000);
       });
     });
+  });
 
+  it('throw without valid combinations gives Zonk!', function() {
+    game.new();
+    setDice('152346');
+    game.keep(0, 1);
+    setDice('223346');
+    game._checkZonk();
+    game.zonk.should.be.true;
+    game.score.should.equal(0);
   });
 
 });
